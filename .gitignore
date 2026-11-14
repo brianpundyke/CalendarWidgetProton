@@ -1,0 +1,15 @@
+# Calendar data must never be committed
+*.ics
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Editors / OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store

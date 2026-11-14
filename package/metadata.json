@@ -1,0 +1,14 @@
+{
+    "KPlugin": {
+        "Id": "local.protonagenda",
+        "Name": "Proton Agenda",
+        "Description": "A list of your upcoming appointments from your Proton Calendar feed",
+        "Icon": "view-calendar-agenda",
+        "Category": "Date and Time",
+        "License": "GPL-2.0-or-later",
+        "Version": "1.0",
+        "FormFactors": ["desktop", "planar"]
+    },
+    "KPackageStructure": "Plasma/Applet",
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
