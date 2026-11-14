@@ -3,12 +3,15 @@ import QtQuick.Layouts
 import QtQuick.Controls as QQC2
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
+import org.kde.kquickcontrols as KQControls
 
 KCM.SimpleKCM {
     property alias cfg_days: daysSpin.value
     property alias cfg_refreshMinutes: refreshSpin.value
     property alias cfg_customUrl: urlField.text
     property alias cfg_dimPast: dimCheck.checked
+    property alias cfg_backgroundMode: bgMode.currentIndex
+    property alias cfg_backgroundColor: bgColor.color
 
     Kirigami.FormLayout {
         QQC2.SpinBox {
@@ -27,6 +30,26 @@ KCM.SimpleKCM {
             id: dimCheck
             Kirigami.FormData.label: i18n("Finished events:")
             text: i18n("Dim them")
+        }
+        QQC2.ComboBox {
+            id: bgMode
+            Kirigami.FormData.label: i18n("Background:")
+            model: [i18n("Plasma theme"), i18n("Custom colour"), i18n("Transparent")]
+        }
+        KQControls.ColorButton {
+            id: bgColor
+            Kirigami.FormData.label: i18n("Colour:")
+            visible: bgMode.currentIndex === 1
+            showAlphaChannel: true
+            dialogTitle: i18n("Widget background colour")
+        }
+        QQC2.Label {
+            visible: bgMode.currentIndex !== 0
+            text: i18n("Applies on the desktop. In a panel the popup uses the Plasma theme.")
+            wrapMode: Text.WordWrap
+            font: Kirigami.Theme.smallFont
+            opacity: 0.7
+            Layout.preferredWidth: Kirigami.Units.gridUnit * 20
         }
         Kirigami.Separator {
             Kirigami.FormData.isSection: true

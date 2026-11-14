@@ -8,5 +8,7 @@
     <entry name="refreshMinutes" type="Int"><default>15</default></entry>
     <entry name="customUrl" type="String"><default></default></entry>
     <entry name="dimPast" type="Bool"><default>true</default></entry>
+    <entry name="backgroundMode" type="Int"><default>0</default></entry>
+    <entry name="backgroundColor" type="Color"><default>#d9232629</default></entry>
   </group>
 </kcfg>

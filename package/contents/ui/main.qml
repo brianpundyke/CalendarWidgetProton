@@ -23,7 +23,20 @@ PlasmoidItem {
     readonly property bool dimPast: Plasmoid.configuration.dimPast
 
     Plasmoid.icon: "view-calendar-agenda"
-    Plasmoid.backgroundHints: PlasmaCore.Types.DefaultBackground | PlasmaCore.Types.ConfigurableBackground
+    // backgroundMode: 0 = Plasma theme, 1 = custom colour, 2 = transparent (desktop only)
+    readonly property bool ownBackground: !inPanel && Plasmoid.configuration.backgroundMode !== 0
+    readonly property bool customBackground: !inPanel && Plasmoid.configuration.backgroundMode === 1
+    Plasmoid.backgroundHints: ownBackground
+        ? PlasmaCore.Types.NoBackground
+        : PlasmaCore.Types.DefaultBackground | PlasmaCore.Types.ConfigurableBackground
+
+    readonly property color themeTextColor: Kirigami.Theme.textColor
+
+    function isLight(c) {
+        // Blend with a mid-grey wallpaper guess when translucent.
+        const a = c.a, mix = v => v * a + 0.5 * (1 - a)
+        return 0.2126 * mix(c.r) + 0.7152 * mix(c.g) + 0.0722 * mix(c.b) > 0.55
+    }
     // Full list on the desktop; a calendar icon with a popup in panels / system tray.
     readonly property bool inPanel: Plasmoid.formFactor === PlasmaCore.Types.Horizontal
                                     || Plasmoid.formFactor === PlasmaCore.Types.Vertical
@@ -213,8 +226,23 @@ PlasmoidItem {
         Layout.preferredWidth: Kirigami.Units.gridUnit * 18
         Layout.preferredHeight: Kirigami.Units.gridUnit * 24
 
+        // With a custom colour, pick dark or light text for contrast.
+        Kirigami.Theme.inherit: !root.customBackground
+        Kirigami.Theme.textColor: root.customBackground
+            ? (root.isLight(Plasmoid.configuration.backgroundColor) ? "#232629" : "#eff0f1")
+            : root.themeTextColor
+
+        Rectangle {
+            anchors.fill: parent
+            visible: root.customBackground
+            color: Plasmoid.configuration.backgroundColor
+            radius: Kirigami.Units.cornerRadius * 2
+        }
+
         ColumnLayout {
             anchors.fill: parent
+            // Plasma's own background adds padding; supply it ourselves otherwise.
+            anchors.margins: root.ownBackground ? Kirigami.Units.largeSpacing : 0
             spacing: Kirigami.Units.smallSpacing
 
             RowLayout {
