@@ -124,6 +124,7 @@ def main():
             end = start
 
         item = {
+            "uid": text(ev, "UID"),
             "title": text(ev, "SUMMARY") or "(no title)",
             "location": text(ev, "LOCATION"),
             "allDay": all_day,

@@ -109,6 +109,20 @@ PlasmoidItem {
         launcher.connectSource("kstart korganizer")
     }
 
+    // Ask KOrganizer (over D-Bus, starting it if needed) to show this occurrence,
+    // then raise its window. Falls back to just opening KOrganizer.
+    function openEvent(uid, startStr) {
+        if (!uid) { openKOrganizer(); return }
+        const d = parseLocal(startStr)
+        // QDateTime as D-Bus struct: ((y,m,d),(h,min,s,ms),timeSpec 0 = local time)
+        const occurrence = "((" + d.getFullYear() + "," + (d.getMonth() + 1) + "," + d.getDate() + "),("
+                         + d.getHours() + "," + d.getMinutes() + ",0,0),0)"
+        launcher.connectSource(
+            "gdbus call --session --dest org.kde.korganizer --object-path /Calendar"
+            + " --method org.kde.calendar.Calendar.showIncidenceByUid "
+            + shellQuote(uid) + " " + shellQuote(occurrence) + " '' >/dev/null 2>&1; kstart korganizer")
+    }
+
     function handleResult(exitCode, stdout, stderr) {
         loading = false
         loadedOnce = true
@@ -130,6 +144,7 @@ PlasmoidItem {
             for (const ev of day.events) {
                 eventModel.append({
                     day: day.date,
+                    uid: ev.uid || "",
                     title: ev.title,
                     location: ev.location,
                     allDay: ev.allDay,
@@ -309,6 +324,7 @@ PlasmoidItem {
                     delegate: Item {
                         id: row
                         required property string day
+                        required property string uid
                         required property string title
                         required property string location
                         required property bool allDay
@@ -372,7 +388,7 @@ PlasmoidItem {
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: root.openKOrganizer()
+                            onClicked: root.openEvent(row.uid, row.start)
                         }
                     }
                 }
