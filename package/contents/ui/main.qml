@@ -32,6 +32,12 @@ PlasmoidItem {
 
     readonly property color themeTextColor: Kirigami.Theme.textColor
 
+    // Colour from the picker (its own alpha ignored) combined with the Opacity slider.
+    readonly property color backgroundColor: {
+        const c = Plasmoid.configuration.backgroundColor
+        return Qt.rgba(c.r, c.g, c.b, Math.max(0, Math.min(100, Plasmoid.configuration.backgroundOpacity)) / 100)
+    }
+
     function isLight(c) {
         // Blend with a mid-grey wallpaper guess when translucent.
         const a = c.a, mix = v => v * a + 0.5 * (1 - a)
@@ -244,13 +250,13 @@ PlasmoidItem {
         // With a custom colour, pick dark or light text for contrast.
         Kirigami.Theme.inherit: !root.customBackground
         Kirigami.Theme.textColor: root.customBackground
-            ? (root.isLight(Plasmoid.configuration.backgroundColor) ? "#232629" : "#eff0f1")
+            ? (root.isLight(root.backgroundColor) ? "#232629" : "#eff0f1")
             : root.themeTextColor
 
         Rectangle {
             anchors.fill: parent
             visible: root.customBackground
-            color: Plasmoid.configuration.backgroundColor
+            color: root.backgroundColor
             radius: Kirigami.Units.cornerRadius * 2
         }
 

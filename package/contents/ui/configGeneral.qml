@@ -12,6 +12,7 @@ KCM.SimpleKCM {
     property alias cfg_dimPast: dimCheck.checked
     property alias cfg_backgroundMode: bgMode.currentIndex
     property alias cfg_backgroundColor: bgColor.color
+    property alias cfg_backgroundOpacity: opacitySlider.value
 
     Kirigami.FormLayout {
         QQC2.SpinBox {
@@ -40,8 +41,24 @@ KCM.SimpleKCM {
             id: bgColor
             Kirigami.FormData.label: i18n("Colour:")
             visible: bgMode.currentIndex === 1
-            showAlphaChannel: true
+            showAlphaChannel: false
             dialogTitle: i18n("Widget background colour")
+        }
+        RowLayout {
+            Kirigami.FormData.label: i18n("Opacity:")
+            visible: bgMode.currentIndex === 1
+            QQC2.Slider {
+                id: opacitySlider
+                from: 0
+                to: 100
+                stepSize: 5
+                snapMode: QQC2.Slider.SnapAlways
+                Layout.preferredWidth: Kirigami.Units.gridUnit * 12
+            }
+            QQC2.Label {
+                text: i18nc("opacity percentage", "%1%", Math.round(opacitySlider.value))
+                Layout.minimumWidth: Kirigami.Units.gridUnit * 2.5
+            }
         }
         QQC2.Label {
             visible: bgMode.currentIndex !== 0
